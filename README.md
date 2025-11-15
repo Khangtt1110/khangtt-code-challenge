@@ -56,6 +56,10 @@ npm run dev
 yarn dev
 ```
 
+The result will be
+
+![Fancy Swap Form Demo](src/problem2/src/assets/demo.png)
+
 ## Problem 3 – React Component Anti-Pattern Review
 
 This section focuses on identifying and refactoring anti-patterns in a React + TypeScript component.

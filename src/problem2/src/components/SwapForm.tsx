@@ -33,10 +33,12 @@ const SwapForm: React.FC = () => {
                 const mapped: Token[] = valid.map((t) => ({
                     currency: t.currency,
                     price: t.price,
-                    image: `https://raw.githubusercontent.com/Switcheo/token-icons/main/tokens/${t.currency}.svg`,
+                    image: `https://raw.githubusercontent.com/Switcheo/token-icons/main/tokens/${t.currency}.svg`
                 }));
 
-                setTokens(mapped);
+                const deduped = Array.from(new Map(mapped.map((t) => [t.currency, t])).values());
+
+                setTokens(deduped);
             } catch (e) {
                 setError(e as string);
             } finally {
@@ -94,15 +96,7 @@ const SwapForm: React.FC = () => {
         setError(null);
     };
 
-    const TokenDropdown = ({
-        selected,
-        onChange,
-        placeholder,
-    }: {
-        selected: string;
-        onChange: (value: string) => void;
-        placeholder: string;
-    }) => {
+    const TokenDropdown = ({ selected, onChange, placeholder }: { selected: string; onChange: (value: string) => void; placeholder: string }) => {
         const [open, setOpen] = useState(false);
 
         const handleSelect = (token: Token) => {
@@ -114,19 +108,10 @@ const SwapForm: React.FC = () => {
 
         return (
             <div className="relative w-full">
-                <button
-                    type="button"
-                    onClick={() => setOpen((o) => !o)}
-                    className="w-full border rounded p-2 flex items-center gap-2 justify-between focus:ring-2 focus:ring-indigo-500 transition"
-                >
+                <button type="button" onClick={() => setOpen((o) => !o)} className="w-full border rounded p-2 flex items-center gap-2 justify-between focus:ring-2 focus:ring-indigo-500 transition">
                     {selectedToken ? (
                         <>
-                            <img
-                                src={selectedToken.image}
-                                alt={selectedToken.currency}
-                                className="w-6 h-6"
-                                onError={(e) => (e.currentTarget.src = FALLBACK_IMAGE)}
-                            />
+                            <img src={selectedToken.image} alt={selectedToken.currency} className="w-6 h-6" onError={(e) => (e.currentTarget.src = FALLBACK_IMAGE)} />
                             <span>{selectedToken.currency}</span>
                         </>
                     ) : (
@@ -137,17 +122,8 @@ const SwapForm: React.FC = () => {
                 {open && (
                     <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-auto">
                         {tokens.map((t) => (
-                            <li
-                                key={t.currency}
-                                onClick={() => handleSelect(t)}
-                                className="p-2 flex items-center gap-2 hover:bg-indigo-100 cursor-pointer transition"
-                            >
-                                <img
-                                    src={t.image}
-                                    alt={t.currency}
-                                    className="w-6 h-6"
-                                    onError={(e) => (e.currentTarget.src = FALLBACK_IMAGE)}
-                                />
+                            <li key={t.currency} onClick={() => handleSelect(t)} className="p-2 flex items-center gap-2 hover:bg-indigo-100 cursor-pointer transition">
+                                <img src={t.image} alt={t.currency} className="w-6 h-6" onError={(e) => (e.currentTarget.src = FALLBACK_IMAGE)} />
                                 <span>{t.currency}</span>
                             </li>
                         ))}
@@ -170,12 +146,7 @@ const SwapForm: React.FC = () => {
                 </div>
 
                 <div className="flex items-end pb-1">
-                    <button
-                        type="button"
-                        onClick={handleReverse}
-                        className="bg-gray-100 hover:bg-gray-200 p-2 rounded-full text-xl font-bold size-10 flex items-center justify-center"
-                        title="Reverse"
-                    >
+                    <button type="button" onClick={handleReverse} className="bg-gray-100 hover:bg-gray-200 p-2 rounded-full text-xl font-bold size-10 flex items-center justify-center" title="Reverse">
                         ⇄
                     </button>
                 </div>
@@ -203,16 +174,11 @@ const SwapForm: React.FC = () => {
                 <button
                     disabled={!canSwap}
                     onClick={handleSwap}
-                    className={`flex-1 py-2 rounded text-white font-medium transition ${
-                        canSwap ? 'bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600' : 'bg-gray-300 cursor-not-allowed'
-                    }`}
+                    className={`flex-1 py-2 rounded text-white font-medium transition ${canSwap ? 'bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600' : 'bg-gray-300 cursor-not-allowed'}`}
                 >
                     {loading ? 'Swapping...' : 'Swap'}
                 </button>
-                <button
-                    onClick={handleReset}
-                    className="px-4 py-2 border rounded hover:bg-gray-50 transition"
-                >
+                <button onClick={handleReset} className="px-4 py-2 border rounded hover:bg-gray-50 transition">
                     Reset
                 </button>
             </div>
